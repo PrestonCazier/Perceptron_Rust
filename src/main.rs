@@ -58,11 +58,18 @@ fn load_data(file:String) -> Data {}
 
 fn preprocess(data:Data) -> Data {
 	let scalar: f64 = 1.0/255.0;
-	let processed = data.data * scalar;
+	let processed = scalar * data.data;
 	return Data {data:processed,target:data.target};
 }
 
-fn init_weights() -> DMatrix<f64> {}
+fn init_weights(width:usize, height:usize) -> DMatrix<f64> {
+	let length = width * height;
+	let mut vec: Vec<f64> = Vec::with_capacity(length);
+	for _ in 0..vec.capacity() {
+		vec.push(rand::thread_rng().gen_range(-0.5,0.5));
+	}
+	return DMatrix::from_vec(width, height, vec);
+}
 
 //fn result(data:DMatrix<f64>, weigths:DMatrix<f64>) -> DMatrix<f64> {}
 //fn activation(results:DMatrix<f64>) -> DMatrix<u8> {}
