@@ -13,7 +13,7 @@ use nalgebra::{DMatrix};
 //activation function such that y = 1 if A(i*w) > 0 else 0
 
 struct Data {
-	target:DMatrix<u8>,
+	target:DMatrix<f64>,
 	data:DMatrix<f64>
 }
 
@@ -28,7 +28,7 @@ fn main() {
 	let mut weights = init_weights(10, 400);
 	let mut test_accuracy = vec![0f64; epochs+1];
 	let mut train_accuracy = vec![0f64; epochs+1];
-	let mut conf_matrix: DMatrix<u8> = DMatrix::from_element(10,10,0);
+	let mut conf_matrix: DMatrix<f64> = DMatrix::from_element(10,10,0);
 
 	//calculate initial accuracy on training and test data
 	for i in 0..epochs {
@@ -37,7 +37,7 @@ fn main() {
 		let test_y = activation(test_set.data, weights);
 		let train_y = activation(train_set.data, weights);
 
-		train(test_set, weights, test_y);
+		train(test_set, weights, test_y, learning_rate);
 		test_accuracy[i] = accuracy(test_set.target, test_y);
 		train_accuracy[i] = accuracy(train_set.target, train_y);
 		conf_matrix = 
@@ -73,18 +73,28 @@ fn init_weights(width:usize, height:usize) -> DMatrix<f64> {
 
 //fn result(data:DMatrix<f64>, weigths:DMatrix<f64>) -> DMatrix<f64> {}
 //fn activation(results:DMatrix<f64>) -> DMatrix<u8> {}
-fn activation(x:DMatrix<f64>, w:DMatrix<f64>) -> DMatrix<u8> {
+fn activation(x:DMatrix<f64>, w:DMatrix<f64>) -> DMatrix<f64> {
 	let result = x*w;
-	return DMatrix::from_fn(result.ncols(), result.nrows(), |r,c| if result[(r,c)] > 0.0f64 {1} else {0});
+	return DMatrix::from_fn(result.ncols(), result.nrows(), |r,c| if result[(r,c)] > 0.0f64 {1.0} else {0.0});
 }
 
-fn train(data:Data, w:DMatrix<f64>, y:DMatrix<u8>) {}
+//x is Xx400
+//w is 400x10
+//t is Xx10
+//y is Xx10
+//dw is 400x10
+fn train(data:Data, w:DMatrix<f64>, y:DMatrix<f64>, learning_rate:f64) {
+	let t = data.target;
+	let x = data.data;
+	let delta = learning_rate* x.transpose() * (t - y);
+	w = w + delta;
+}
 
-fn accuracy(t: DMatrix<u8>, y: DMatrix<u8>) -> f64 {}
+fn accuracy(t: DMatrix<f64>, y: DMatrix<f64>) -> f64 {}
 
 // the loss function used here is 1/2 * (expected y - actual y)^2
 // where y is the result of the activation function
 //fn loss(activation:u8) -> f64 {}
 
 fn show_graph() {}
-fn show_conf_matrix(conf_matrix:DMatrix<u8>) {}
+fn show_conf_matrix(conf_matrix:DMatrix<f64>) {}
