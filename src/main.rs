@@ -1,7 +1,11 @@
+extern crate nalgebra;
+
 use std::cmp::Ordering;
 use rand::Rng;
-use nalgebra::DMatrix;
-use nalgebra::DVector;
+use std::error::Error;
+use std::io;
+use std::process;
+use nalgebra::{DMatrix};
 
 // first piece in weight vector is bias
 // first piece in input vector is 1f64
@@ -44,10 +48,20 @@ fn main() {
 	//show plots and confusion matrix
 	show_graph();
 	show_conf_matrix(conf_matrix);
+	// let a: f64 = 1.0/255.0;
+	// let b: DMatrix<f64> = DMatrix::from_vec(4, 3, vec![1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0]);
+	// let result = a*b;
+	// println!("{}", result);
 }
 
 fn load_data(file:String) -> Data {}
-fn preprocess(data:Data) -> Data {}
+
+fn preprocess(data:Data) -> Data {
+	let scalar: f64 = 1.0/255.0;
+	let processed = data.data * scalar;
+	return Data {data:processed,target:data.target};
+}
+
 fn init_weights() -> DMatrix<f64> {}
 
 //fn result(data:DMatrix<f64>, weigths:DMatrix<f64>) -> DMatrix<f64> {}
