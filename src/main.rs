@@ -25,7 +25,7 @@ fn main() {
 	let train_csv = String::from("../mnist_train.csv");
 	let test_set: Data = preprocess(load_data(test_csv));
 	let train_set: Data = preprocess(load_data(train_csv));
-	let mut weights = init_weights();
+	let mut weights = init_weights(10, 400);
 	let mut test_accuracy = vec![0f64; epochs+1];
 	let mut train_accuracy = vec![0f64; epochs+1];
 	let mut conf_matrix: DMatrix<u8> = DMatrix::from_element(10,10,0);
@@ -73,9 +73,13 @@ fn init_weights(width:usize, height:usize) -> DMatrix<f64> {
 
 //fn result(data:DMatrix<f64>, weigths:DMatrix<f64>) -> DMatrix<f64> {}
 //fn activation(results:DMatrix<f64>) -> DMatrix<u8> {}
-fn activation(data:DMatrix<f64>, w:DMatrix<f64>) -> DMatrix<u8> {}
+fn activation(x:DMatrix<f64>, w:DMatrix<f64>) -> DMatrix<u8> {
+	let result = x*w;
+	return DMatrix::from_fn(result.ncols(), result.nrows(), |r,c| if result[(r,c)] > 0.0f64 {1} else {0});
+}
 
 fn train(data:Data, w:DMatrix<f64>, y:DMatrix<u8>) {}
+
 fn accuracy(t: DMatrix<u8>, y: DMatrix<u8>) -> f64 {}
 
 // the loss function used here is 1/2 * (expected y - actual y)^2
