@@ -5,7 +5,7 @@ use rand::Rng;
 use std::error::Error;
 use std::io;
 use std::process;
-use nalgebra::{DMatrix};
+use nalgebra::{DMatrix,DVector};
 
 // first piece in weight vector is bias
 // first piece in input vector is 1f64
@@ -90,7 +90,25 @@ fn train(data:Data, w:DMatrix<f64>, y:DMatrix<f64>, learning_rate:f64) {
 	w = w + delta;
 }
 
-fn accuracy(t: DMatrix<f64>, y: DMatrix<f64>) -> f64 {}
+fn accuracy(conf_matrix: DMatrix<f64>) -> DVector<f64> {
+	// let identity = DVector::from_element(conf_matrix.nrows(), 1.0f64);
+	// let a = conf_matrix.row(0);
+	// let b = conf_matrix[(0,0)];
+	// let c = DVector::from_fn(conf_matrix.nrows(), |1,i| {conf_matrix.row(0);});
+	// return DVector::from_fn(conf_matrix.nrows(), |i| conf_matrix[(i,i)]/(DVector::from_slice(conf_matrix.row(i)).dot(identity)));
+	let mut vec: Vec<f64> = Vec::with_capacity(conf_matrix.nrows());
+	for i in 0..vec.capacity() {
+		let total = 0.0;
+		for j in 0..conf_matrix.ncols() {
+			total += conf_matrix[(i,j)];
+		}
+		if total == 0.0 {
+			continue;
+		}
+		vec.push(conf_matrix[(i,i)]/total);
+	}
+	return DVector::from_fn(vec.capacity(), |i, 1| {vec[i]});
+}
 
 // the loss function used here is 1/2 * (expected y - actual y)^2
 // where y is the result of the activation function
